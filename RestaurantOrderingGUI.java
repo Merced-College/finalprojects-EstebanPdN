@@ -1,26 +1,41 @@
+package restaurant;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
+
+/*
+This is the graphical interface for the Restaurant Ordering System.
+The user can search, sort, add items, remove items, undo, place orders,
+save receipts, and send orders to a kitchen queue.
+*/
 
 public class RestaurantOrderingGUI extends JFrame {
     private ArrayList<Item> menuItems;
     private Order currentOrder;
+    private Queue<Order> kitchenQueue;
 
     private DefaultListModel<Item> menuListModel;
-    private DefaultListModel<Item> orderListModel;
+    private DefaultListModel<OrderItem> orderListModel;
 
     private JList<Item> menuList;
-    private JList<Item> orderList;
+    private JList<OrderItem> orderList;
 
     private JLabel totalLabel;
+    private JLabel itemCountLabel;
+    private JLabel queueLabel;
+
     private JTextField searchField;
 
     public RestaurantOrderingGUI() {
         menuItems = MenuLoader.loadMenu("menu.csv");
         currentOrder = new Order();
+        kitchenQueue = new LinkedList<>();
 
         setTitle("Restaurant Ordering System");
-        setSize(800, 520);
+        setSize(950, 550);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -40,6 +55,18 @@ public class RestaurantOrderingGUI extends JFrame {
 
         JPanel mainPanel = new JPanel(new GridLayout(1, 3, 10, 10));
 
+        JPanel menuPanel = createMenuPanel();
+        JPanel buttonPanel = createButtonPanel();
+        JPanel orderPanel = createOrderPanel();
+
+        mainPanel.add(menuPanel);
+        mainPanel.add(buttonPanel);
+        mainPanel.add(orderPanel);
+
+        add(mainPanel);
+    }
+
+    private JPanel createMenuPanel() {
         JPanel menuPanel = new JPanel(new BorderLayout());
 
         JLabel menuLabel = new JLabel("Menu", SwingConstants.CENTER);
@@ -66,38 +93,65 @@ public class RestaurantOrderingGUI extends JFrame {
 
         menuPanel.add(menuControlPanel, BorderLayout.SOUTH);
 
-        JPanel buttonPanel = new JPanel(new GridLayout(4, 1, 5, 5));
-
-        JButton addButton = new JButton("Add Item");
-        JButton removeButton = new JButton("Remove Item");
-        JButton clearButton = new JButton("Clear Order");
-        JButton placeOrderButton = new JButton("Place Order");
-
-        buttonPanel.add(addButton);
-        buttonPanel.add(removeButton);
-        buttonPanel.add(clearButton);
-        buttonPanel.add(placeOrderButton);
-
-        JPanel orderPanel = new JPanel(new BorderLayout());
-        orderPanel.add(new JLabel("Current Order", SwingConstants.CENTER), BorderLayout.NORTH);
-        orderPanel.add(new JScrollPane(orderList), BorderLayout.CENTER);
-
-        totalLabel = new JLabel("Total: $0.00", SwingConstants.CENTER);
-        orderPanel.add(totalLabel, BorderLayout.SOUTH);
-
-        mainPanel.add(menuPanel);
-        mainPanel.add(buttonPanel);
-        mainPanel.add(orderPanel);
-
-        add(mainPanel);
-
-        addButton.addActionListener(e -> addSelectedItem());
-        removeButton.addActionListener(e -> removeSelectedItem());
-        clearButton.addActionListener(e -> clearOrder());
-        placeOrderButton.addActionListener(e -> placeOrder());
         searchButton.addActionListener(e -> searchMenu());
         resetButton.addActionListener(e -> showAllMenuItems());
         sortPriceButton.addActionListener(e -> sortMenuByPrice());
+
+        return menuPanel;
+    }
+
+    private JPanel createButtonPanel() {
+        JPanel buttonPanel = new JPanel(new GridLayout(8, 1, 5, 5));
+
+        JButton addButton = new JButton("Add Item");
+        JButton removeButton = new JButton("Remove Item");
+        JButton undoButton = new JButton("Undo Last Add");
+        JButton clearButton = new JButton("Clear Order");
+        JButton placeOrderButton = new JButton("Place Order");
+        JButton saveReceiptButton = new JButton("Save Receipt");
+        JButton sendKitchenButton = new JButton("Send to Kitchen");
+        JButton processKitchenButton = new JButton("Process Next Order");
+
+        buttonPanel.add(addButton);
+        buttonPanel.add(removeButton);
+        buttonPanel.add(undoButton);
+        buttonPanel.add(clearButton);
+        buttonPanel.add(placeOrderButton);
+        buttonPanel.add(saveReceiptButton);
+        buttonPanel.add(sendKitchenButton);
+        buttonPanel.add(processKitchenButton);
+
+        addButton.addActionListener(e -> addSelectedItem());
+        removeButton.addActionListener(e -> removeSelectedItem());
+        undoButton.addActionListener(e -> undoLastAdd());
+        clearButton.addActionListener(e -> clearOrder());
+        placeOrderButton.addActionListener(e -> placeOrder());
+        saveReceiptButton.addActionListener(e -> saveReceipt());
+        sendKitchenButton.addActionListener(e -> sendToKitchen());
+        processKitchenButton.addActionListener(e -> processNextKitchenOrder());
+
+        return buttonPanel;
+    }
+
+    private JPanel createOrderPanel() {
+        JPanel orderPanel = new JPanel(new BorderLayout());
+
+        orderPanel.add(new JLabel("Current Order", SwingConstants.CENTER), BorderLayout.NORTH);
+        orderPanel.add(new JScrollPane(orderList), BorderLayout.CENTER);
+
+        JPanel infoPanel = new JPanel(new GridLayout(3, 1));
+
+        totalLabel = new JLabel("Total: $0.00", SwingConstants.CENTER);
+        itemCountLabel = new JLabel("Items: 0", SwingConstants.CENTER);
+        queueLabel = new JLabel("Kitchen Queue: 0", SwingConstants.CENTER);
+
+        infoPanel.add(totalLabel);
+        infoPanel.add(itemCountLabel);
+        infoPanel.add(queueLabel);
+
+        orderPanel.add(infoPanel, BorderLayout.SOUTH);
+
+        return orderPanel;
     }
 
     private void loadMenuList(ArrayList<Item> items) {
@@ -108,7 +162,11 @@ public class RestaurantOrderingGUI extends JFrame {
         }
     }
 
-    // Search algorithm
+    /*
+    Linear Search
+    This method searches the menu by checking each item name.
+    */
+    
     private void searchMenu() {
         String searchText = searchField.getText().trim().toLowerCase();
         ArrayList<Item> results = new ArrayList<>();
@@ -131,7 +189,11 @@ public class RestaurantOrderingGUI extends JFrame {
         loadMenuList(menuItems);
     }
 
-    // Selection sort algorithm
+    /*
+	Selection Sort
+    This method sorts menu items from lowest price to highest price.
+    */
+    
     private void sortMenuByPrice() {
         ArrayList<Item> sortedItems = new ArrayList<>(menuItems);
 
@@ -157,29 +219,36 @@ public class RestaurantOrderingGUI extends JFrame {
 
         if (selectedItem != null) {
             currentOrder.addItem(selectedItem);
-            orderListModel.addElement(selectedItem);
-            updateTotal();
+            refreshOrderList();
         } else {
             JOptionPane.showMessageDialog(this, "Please select an item from the menu.");
         }
     }
 
     private void removeSelectedItem() {
-        int selectedIndex = orderList.getSelectedIndex();
+        OrderItem selectedItem = orderList.getSelectedValue();
 
-        if (selectedIndex >= 0) {
-            currentOrder.removeItem(selectedIndex);
-            orderListModel.remove(selectedIndex);
-            updateTotal();
+        if (selectedItem != null) {
+            currentOrder.removeItem(selectedItem.getName());
+            refreshOrderList();
         } else {
             JOptionPane.showMessageDialog(this, "Please select an item to remove.");
         }
     }
 
+    private void undoLastAdd() {
+        boolean success = currentOrder.undoLastAdd();
+
+        if (success) {
+            refreshOrderList();
+        } else {
+            JOptionPane.showMessageDialog(this, "There is nothing to undo.");
+        }
+    }
+
     private void clearOrder() {
         currentOrder.clearOrder();
-        orderListModel.clear();
-        updateTotal();
+        refreshOrderList();
     }
 
     private void placeOrder() {
@@ -188,17 +257,65 @@ public class RestaurantOrderingGUI extends JFrame {
             return;
         }
 
-        double total = currentOrder.calculateTotal();
-
         JOptionPane.showMessageDialog(
                 this,
-                "Order placed successfully!\nTotal: $" + String.format("%.2f", total)
+                "Order placed successfully!\n\n" + currentOrder.getReceiptText()
         );
 
         clearOrder();
     }
 
-    private void updateTotal() {
+    private void saveReceipt() {
+        if (currentOrder.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Your order is empty. There is no receipt to save.");
+            return;
+        }
+
+        ReceiptWriter.saveReceipt("receipt.txt", currentOrder.getReceiptText());
+        JOptionPane.showMessageDialog(this, "Receipt saved to receipt.txt.");
+    }
+
+    private void sendToKitchen() {
+        if (currentOrder.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Your order is empty.");
+            return;
+        }
+
+        kitchenQueue.add(new Order(currentOrder));
+        clearOrder();
+        updateLabels();
+
+        JOptionPane.showMessageDialog(this, "Order sent to kitchen queue.");
+    }
+
+    private void processNextKitchenOrder() {
+        if (kitchenQueue.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "There are no orders in the kitchen queue.");
+            return;
+        }
+
+        Order nextOrder = kitchenQueue.poll();
+        updateLabels();
+
+        JOptionPane.showMessageDialog(
+                this,
+                "Next kitchen order processed:\n\n" + nextOrder.getReceiptText()
+        );
+    }
+
+    private void refreshOrderList() {
+        orderListModel.clear();
+
+        for (OrderItem orderItem : currentOrder.getOrderItems()) {
+            orderListModel.addElement(orderItem);
+        }
+
+        updateLabels();
+    }
+
+    private void updateLabels() {
         totalLabel.setText("Total: $" + String.format("%.2f", currentOrder.calculateTotal()));
+        itemCountLabel.setText("Items: " + currentOrder.countItemsRecursive());
+        queueLabel.setText("Kitchen Queue: " + kitchenQueue.size());
     }
 }

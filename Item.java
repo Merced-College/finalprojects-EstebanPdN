@@ -1,3 +1,5 @@
+//Represents one menu item with a name and price.
+
 public class Item {
     private String name;
     private double price;
@@ -8,17 +10,18 @@ public class Item {
         this.price = price;
     }
 
-    // Getters
+    // Get item name
     public String getName() {
         return name;
     }
 
+    // Get item price
     public double getPrice() {
         return price;
     }
 
-    // Display item
+    // Display item in the menu
     public String toString() {
-        return name + " - $" + price;
+        return name + " - $" + String.format("%.2f", price);
     }
 }
