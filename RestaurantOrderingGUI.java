@@ -20,7 +20,7 @@ public class RestaurantOrderingGUI extends JFrame {
         currentOrder = new Order();
 
         setTitle("Restaurant Ordering System");
-        setSize(750, 500);
+        setSize(800, 520);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -47,7 +47,7 @@ public class RestaurantOrderingGUI extends JFrame {
 
         menuPanel.add(new JScrollPane(menuList), BorderLayout.CENTER);
 
-        JPanel searchPanel = new JPanel(new GridLayout(2, 1, 5, 5));
+        JPanel menuControlPanel = new JPanel(new GridLayout(3, 1, 5, 5));
 
         searchField = new JTextField();
 
@@ -58,10 +58,13 @@ public class RestaurantOrderingGUI extends JFrame {
         searchButtonPanel.add(searchButton);
         searchButtonPanel.add(resetButton);
 
-        searchPanel.add(searchField);
-        searchPanel.add(searchButtonPanel);
+        JButton sortPriceButton = new JButton("Sort by Price");
 
-        menuPanel.add(searchPanel, BorderLayout.SOUTH);
+        menuControlPanel.add(searchField);
+        menuControlPanel.add(searchButtonPanel);
+        menuControlPanel.add(sortPriceButton);
+
+        menuPanel.add(menuControlPanel, BorderLayout.SOUTH);
 
         JPanel buttonPanel = new JPanel(new GridLayout(4, 1, 5, 5));
 
@@ -94,6 +97,7 @@ public class RestaurantOrderingGUI extends JFrame {
         placeOrderButton.addActionListener(e -> placeOrder());
         searchButton.addActionListener(e -> searchMenu());
         resetButton.addActionListener(e -> showAllMenuItems());
+        sortPriceButton.addActionListener(e -> sortMenuByPrice());
     }
 
     private void loadMenuList(ArrayList<Item> items) {
@@ -125,6 +129,27 @@ public class RestaurantOrderingGUI extends JFrame {
     private void showAllMenuItems() {
         searchField.setText("");
         loadMenuList(menuItems);
+    }
+
+    // Selection sort algorithm
+    private void sortMenuByPrice() {
+        ArrayList<Item> sortedItems = new ArrayList<>(menuItems);
+
+        for (int i = 0; i < sortedItems.size() - 1; i++) {
+            int minIndex = i;
+
+            for (int j = i + 1; j < sortedItems.size(); j++) {
+                if (sortedItems.get(j).getPrice() < sortedItems.get(minIndex).getPrice()) {
+                    minIndex = j;
+                }
+            }
+
+            Item temp = sortedItems.get(i);
+            sortedItems.set(i, sortedItems.get(minIndex));
+            sortedItems.set(minIndex, temp);
+        }
+
+        loadMenuList(sortedItems);
     }
 
     private void addSelectedItem() {
