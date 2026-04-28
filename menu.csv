@@ -1,7 +1,107 @@
-Burger,5.99
-Pizza,8.49
-Fries,2.99
-Soda,1.50
-Salad,4.25
-Chicken Sandwich,7.25
-Ice Cream,3.75
+Classic Burger,8.99
+Cheeseburger,9.49
+Double Cheeseburger,11.99
+Bacon Burger,10.99
+Mushroom Swiss Burger,10.49
+BBQ Burger,10.99
+Spicy Jalapeno Burger,10.49
+Veggie Burger,8.75
+Chicken Sandwich,8.99
+Grilled Chicken Sandwich,9.49
+Crispy Chicken Sandwich,9.49
+Spicy Chicken Sandwich,9.99
+Fish Sandwich,8.75
+Turkey Club Sandwich,9.25
+BLT Sandwich,7.99
+Philly Cheesesteak,11.49
+Ham and Cheese Sandwich,7.75
+Tuna Sandwich,7.99
+Grilled Cheese,5.99
+Hot Dog,4.99
+Chili Dog,6.49
+Chicken Tenders,8.49
+Buffalo Wings,9.99
+BBQ Wings,9.99
+Boneless Wings,8.99
+Chicken Nuggets,6.99
+Mozzarella Sticks,6.49
+Onion Rings,4.99
+French Fries,3.49
+Curly Fries,4.25
+Sweet Potato Fries,4.49
+Loaded Fries,6.99
+Garlic Fries,4.99
+Tater Tots,3.99
+Nachos,7.99
+Loaded Nachos,9.99
+Cheese Quesadilla,6.99
+Chicken Quesadilla,8.99
+Beef Quesadilla,9.49
+Chicken Tacos,7.99
+Beef Tacos,8.49
+Fish Tacos,8.99
+Veggie Tacos,7.49
+Chicken Burrito,9.49
+Beef Burrito,9.99
+Bean and Cheese Burrito,6.99
+Steak Burrito,11.49
+Shrimp Burrito,11.99
+Cheese Pizza Slice,3.99
+Pepperoni Pizza Slice,4.49
+Sausage Pizza Slice,4.49
+Veggie Pizza Slice,4.25
+Cheese Pizza,12.99
+Pepperoni Pizza,14.99
+Hawaiian Pizza,15.49
+BBQ Chicken Pizza,16.49
+Meat Lovers Pizza,17.99
+Veggie Pizza,15.99
+Margherita Pizza,14.49
+Chicken Alfredo Pasta,12.99
+Spaghetti and Meatballs,11.99
+Fettuccine Alfredo,10.99
+Baked Ziti,11.49
+Mac and Cheese,7.99
+Chicken Caesar Salad,9.99
+Garden Salad,6.99
+Caesar Salad,7.49
+Greek Salad,8.49
+Cobb Salad,10.99
+Taco Salad,9.99
+Fruit Salad,5.99
+Tomato Soup,4.99
+Chicken Noodle Soup,5.49
+Clam Chowder,6.49
+Chili Bowl,6.99
+Rice Bowl,8.49
+Chicken Teriyaki Bowl,10.49
+Beef Rice Bowl,10.99
+Shrimp Rice Bowl,11.99
+Veggie Rice Bowl,8.99
+Pancakes,7.99
+French Toast,7.99
+Waffles,8.49
+Breakfast Burrito,8.99
+Egg Sandwich,6.99
+Bacon and Eggs,8.99
+Omelette,9.49
+Hash Browns,3.99
+Coffee,2.49
+Iced Coffee,3.49
+Hot Tea,2.25
+Iced Tea,2.75
+Lemonade,2.99
+Soda,2.49
+Bottled Water,1.99
+Orange Juice,3.25
+Apple Juice,3.25
+Milkshake,5.49
+Chocolate Milkshake,5.49
+Vanilla Milkshake,5.49
+Strawberry Milkshake,5.49
+Ice Cream Cup,3.99
+Brownie,3.49
+Chocolate Cake,4.99
+Cheesecake,5.49
+Apple Pie,4.49
+Chocolate Chip Cookie,2.49

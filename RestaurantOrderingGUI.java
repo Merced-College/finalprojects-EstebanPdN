@@ -13,13 +13,14 @@ public class RestaurantOrderingGUI extends JFrame {
     private JList<Item> orderList;
 
     private JLabel totalLabel;
+    private JTextField searchField;
 
     public RestaurantOrderingGUI() {
         menuItems = MenuLoader.loadMenu("menu.csv");
         currentOrder = new Order();
 
         setTitle("Restaurant Ordering System");
-        setSize(700, 450);
+        setSize(750, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -32,9 +33,7 @@ public class RestaurantOrderingGUI extends JFrame {
         menuListModel = new DefaultListModel<>();
         orderListModel = new DefaultListModel<>();
 
-        for (Item item : menuItems) {
-            menuListModel.addElement(item);
-        }
+        loadMenuList(menuItems);
 
         menuList = new JList<>(menuListModel);
         orderList = new JList<>(orderListModel);
@@ -42,8 +41,27 @@ public class RestaurantOrderingGUI extends JFrame {
         JPanel mainPanel = new JPanel(new GridLayout(1, 3, 10, 10));
 
         JPanel menuPanel = new JPanel(new BorderLayout());
-        menuPanel.add(new JLabel("Menu", SwingConstants.CENTER), BorderLayout.NORTH);
+
+        JLabel menuLabel = new JLabel("Menu", SwingConstants.CENTER);
+        menuPanel.add(menuLabel, BorderLayout.NORTH);
+
         menuPanel.add(new JScrollPane(menuList), BorderLayout.CENTER);
+
+        JPanel searchPanel = new JPanel(new GridLayout(2, 1, 5, 5));
+
+        searchField = new JTextField();
+
+        JPanel searchButtonPanel = new JPanel(new GridLayout(1, 2, 5, 5));
+        JButton searchButton = new JButton("Search");
+        JButton resetButton = new JButton("Show All");
+
+        searchButtonPanel.add(searchButton);
+        searchButtonPanel.add(resetButton);
+
+        searchPanel.add(searchField);
+        searchPanel.add(searchButtonPanel);
+
+        menuPanel.add(searchPanel, BorderLayout.SOUTH);
 
         JPanel buttonPanel = new JPanel(new GridLayout(4, 1, 5, 5));
 
@@ -74,6 +92,39 @@ public class RestaurantOrderingGUI extends JFrame {
         removeButton.addActionListener(e -> removeSelectedItem());
         clearButton.addActionListener(e -> clearOrder());
         placeOrderButton.addActionListener(e -> placeOrder());
+        searchButton.addActionListener(e -> searchMenu());
+        resetButton.addActionListener(e -> showAllMenuItems());
+    }
+
+    private void loadMenuList(ArrayList<Item> items) {
+        menuListModel.clear();
+
+        for (Item item : items) {
+            menuListModel.addElement(item);
+        }
+    }
+
+    // Search algorithm
+    private void searchMenu() {
+        String searchText = searchField.getText().trim().toLowerCase();
+        ArrayList<Item> results = new ArrayList<>();
+
+        for (Item item : menuItems) {
+            if (item.getName().toLowerCase().contains(searchText)) {
+                results.add(item);
+            }
+        }
+
+        loadMenuList(results);
+
+        if (results.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No menu items found.");
+        }
+    }
+
+    private void showAllMenuItems() {
+        searchField.setText("");
+        loadMenuList(menuItems);
     }
 
     private void addSelectedItem() {
